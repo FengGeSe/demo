@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package pb;
+
+// create
+message CreateReq {
+    string name = 1;
+    int64 age = 2;
+}
+
+message CreateResp {
+    int64 code = 1;
+    string msg = 2;
+    CreateRespData data = 3;
+}
+
+message CreateRespData {
+    string id = 1;
+    string name = 2;
+    int64 age = 3;
+}
+
+
+// Delete
+message DeleteReq {
+    string name = 1;
+    int64 id = 2;
+}
+
+message DeleteResp {
+    int64 code = 1;
+    string msg = 2;
+    DeleteRespData data = 3;
+}
+
+message DeleteRespData {
+    bool result = 1;
+}
