@@ -14,11 +14,11 @@ import (
 
 func init() {
 	// flags
-	flag.StringVar(&conf.GRPCAddr, "grpc-addr", conf.GetEnv("GRPCAddr", "0.0.0.0:5000"), "grpc服务地址")
+	flag.StringVar(&conf.GrpcAddr, "grpc-addr", conf.GetEnv("GrpcAddr", "0.0.0.0:5000"), "grpc服务地址")
 }
 
 func main() {
-	conn, err := grpc.Dial(conf.GRPCAddr, grpc.WithInsecure())
+	conn, err := grpc.Dial(conf.GrpcAddr, grpc.WithInsecure())
 	if err != nil {
 		fmt.Printf("创建grpc连接失败! Error: %s", err)
 	}

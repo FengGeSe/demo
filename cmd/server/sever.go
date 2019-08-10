@@ -16,8 +16,8 @@ import (
 
 func init() {
 	// flags
-	flag.StringVar(&conf.HTTPAddr, "http-addr", conf.GetEnv("HTTPAddr", "0.0.0.0:8080"), "http服务地址")
-	flag.StringVar(&conf.GRPCAddr, "grpc-addr", conf.GetEnv("GRPCAddr", "0.0.0.0:5000"), "grpc服务地址")
+	flag.StringVar(&conf.HttpAddr, "http-addr", conf.GetEnv("HttpAddr", "0.0.0.0:8080"), "http服务地址")
+	flag.StringVar(&conf.GrpcAddr, "grpc-addr", conf.GetEnv("GrpcAddr", "0.0.0.0:5000"), "grpc服务地址")
 
 	// log
 	log.SetOutput(os.Stdout)
@@ -27,8 +27,8 @@ func init() {
 	})
 
 	log.WithFields(log.Fields{
-		"http-addr": conf.HTTPAddr,
-		"grpc-addr": conf.GRPCAddr,
+		"http-addr": conf.HttpAddr,
+		"grpc-addr": conf.GrpcAddr,
 	}).Info("run flags:")
 }
 
@@ -39,14 +39,14 @@ func main() {
 
 	// http server
 	{
-		log.WithField("http-addr", conf.HTTPAddr).Info("http server is running...")
-		go http.Run(conf.HTTPAddr, errc)
+		log.WithField("http-addr", conf.HttpAddr).Info("http server is running...")
+		go http.Run(conf.HttpAddr, errc)
 	}
 
 	// grpc server
 	{
-		log.WithField("grpc-addr", conf.GRPCAddr).Info("grpc server is running...")
-		go grpc.Run(conf.GRPCAddr, errc)
+		log.WithField("grpc-addr", conf.GrpcAddr).Info("grpc server is running...")
+		go grpc.Run(conf.GrpcAddr, errc)
 	}
 
 	log.WithField("error", <-errc).Info("Exit")
