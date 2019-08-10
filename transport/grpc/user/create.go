@@ -6,7 +6,6 @@ import (
 
 	model "demo/model/user"
 	pb "demo/pb/user"
-	svc "demo/service/user"
 
 	"google.golang.org/grpc"
 )
@@ -26,10 +25,10 @@ func decodeCreateRequest(c context.Context, grpcReq interface{}) (interface{}, e
 }
 
 // 2. encode response           model -> pb
-func encodeExecuteResponse(c context.Context, response interface{}) (interface{}, error) {
-	resp, ok := response.(model.CreateResp)
+func encodeCreateResponse(c context.Context, response interface{}) (interface{}, error) {
+	resp, ok := response.(*model.CreateResp)
 	if !ok {
-		return nil, fmt.Errorf("grpc server encode response出错！")
+		return nil, fmt.Errorf("grpc server encode response error (%T)", response)
 	}
 	r := &pb.CreateResp{
 		Code: resp.Code,
@@ -43,20 +42,22 @@ func encodeExecuteResponse(c context.Context, response interface{}) (interface{}
 	return r, nil
 }
 
-func UserCreateHandler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(model.CreateReq)
-	if err := dec(in); err != nil {
-		return nil, err
+func MakeCreateHandler(fullMethod string) func(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	return func(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+		in := new(pb.CreateReq)
+		if err := dec(in); err != nil {
+			return nil, err
+		}
+		if interceptor == nil {
+			return srv.(UserServer).Create(ctx, in)
+		}
+		info := &grpc.UnaryServerInfo{
+			Server:     srv,
+			FullMethod: fullMethod,
+		}
+		handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.(UserServer).Create(ctx, req.(*pb.CreateReq))
+		}
+		return interceptor(ctx, in, info, handler)
 	}
-	if interceptor == nil {
-		return srv.(svc.UserSvc).Create(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.User/Create",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(svc.UserSvc).Create(ctx, req.(*model.CreateReq))
-	}
-	return interceptor(ctx, in, info, handler)
 }

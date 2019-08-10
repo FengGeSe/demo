@@ -7,7 +7,13 @@ import (
 	model "demo/model/user"
 )
 
-func (s *userSvc) Create(context.Context, *model.CreateReq) (*model.CreateResp, error) {
+func (s *userSvc) Create(ctx context.Context, req *model.CreateReq) (*model.CreateResp, error) {
 	fmt.Println("Create")
-	return model.NewCreateResp(), nil
+	resp := model.NewCreateResp()
+	resp.Code = 200
+	resp.Msg = "success"
+	resp.Data.Id = "12"
+	resp.Data.Name = req.Name
+	resp.Data.Age = req.Age
+	return resp, nil
 }

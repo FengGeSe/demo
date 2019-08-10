@@ -16,8 +16,8 @@ import (
 
 func init() {
 	// flags
-	flag.StringVar(&conf.HTTPAddr, "http-addr", GetEnv("HTTPAddr", "0.0.0.0:8080"), "http服务地址")
-	flag.StringVar(&conf.GRPCAddr, "grpc-addr", GetEnv("GRPCAddr", "0.0.0.0:5000"), "grpc服务地址")
+	flag.StringVar(&conf.HTTPAddr, "http-addr", conf.GetEnv("HTTPAddr", "0.0.0.0:8080"), "http服务地址")
+	flag.StringVar(&conf.GRPCAddr, "grpc-addr", conf.GetEnv("GRPCAddr", "0.0.0.0:5000"), "grpc服务地址")
 
 	// log
 	log.SetOutput(os.Stdout)
@@ -50,12 +50,4 @@ func main() {
 	}
 
 	log.WithField("error", <-errc).Info("Exit")
-}
-
-func GetEnv(name string, def string) string {
-	env := os.Getenv(name)
-	if env == "" {
-		return def
-	}
-	return env
 }

@@ -6,7 +6,6 @@ import (
 
 	model "demo/model/user"
 	pb "demo/pb/user"
-	svc "demo/service/user"
 
 	"google.golang.org/grpc"
 )
@@ -27,7 +26,7 @@ func decodeDeleteRequest(c context.Context, grpcReq interface{}) (interface{}, e
 
 // 2. encode response           model -> pb
 func encodeDeleteResponse(c context.Context, response interface{}) (interface{}, error) {
-	resp, ok := response.(model.DeleteResp)
+	resp, ok := response.(*model.DeleteResp)
 	if !ok {
 		return nil, fmt.Errorf("grpc server encode response出错！")
 	}
@@ -41,20 +40,22 @@ func encodeDeleteResponse(c context.Context, response interface{}) (interface{},
 	return r, nil
 }
 
-func UserDeleteHandler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(model.DeleteReq)
-	if err := dec(in); err != nil {
-		return nil, err
+func MakeDeleteHandler(fullMethod string) func(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	return func(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+		in := new(pb.DeleteReq)
+		if err := dec(in); err != nil {
+			return nil, err
+		}
+		if interceptor == nil {
+			return srv.(UserServer).Delete(ctx, in)
+		}
+		info := &grpc.UnaryServerInfo{
+			Server:     srv,
+			FullMethod: fullMethod,
+		}
+		handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+			return srv.(UserServer).Delete(ctx, req.(*pb.DeleteReq))
+		}
+		return interceptor(ctx, in, info, handler)
 	}
-	if interceptor == nil {
-		return srv.(svc.UserSvc).Delete(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/pb.User/Delete",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(svc.UserSvc).Delete(ctx, req.(*model.DeleteReq))
-	}
-	return interceptor(ctx, in, info, handler)
 }
