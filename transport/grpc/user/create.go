@@ -13,8 +13,9 @@ import (
 // Server
 // 1. decode request          pb -> model
 func decodeCreateRequest(c context.Context, grpcReq interface{}) (interface{}, error) {
-	req, ok := grpcReq.(*pb.CreateReq)
+	req, ok := grpcReq.(*model.CreateReq)
 	if !ok {
+		fmt.Println("haha")
 		return nil, fmt.Errorf("grpc server decode request出错！")
 	}
 	request := &model.CreateReq{

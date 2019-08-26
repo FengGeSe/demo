@@ -25,7 +25,7 @@ func main() {
 	defer conn.Close()
 
 	Create(conn)
-	Delete(conn)
+	//	Delete(conn)
 }
 
 func Create(conn *grpc.ClientConn) {

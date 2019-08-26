@@ -2,7 +2,6 @@ package errors
 
 import (
 	"encoding/json"
-	"errors"
 )
 
 var (
@@ -22,8 +21,8 @@ func (e *Error) String() string {
 	return string(data)
 }
 
-func (e *Error) Error() error {
-	return errors.New(e.String())
+func (e *Error) Error() string {
+	return e.String()
 }
 
 func NewError(code int, msg string) error {
@@ -31,7 +30,7 @@ func NewError(code int, msg string) error {
 		Code: code,
 		Msg:  msg,
 	}
-	return e.Error()
+	return e
 }
 
 func ParseError(data string) *Error {
