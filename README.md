@@ -1,5 +1,43 @@
 # go-kit demo
 
+基于[go-kit](https://github.com/go-kit/kit)的一个demo工程。
+
+go-kit: A standard library for microservices.
+
+
+
+### 目标
+
+* 支持多种协议和数据传输格式
+* 开闭原则
+* 中间件
+
+
+
+### 功能
+
+- [x] pb+grpc
+- [x] json+http
+- [x] error处理
+- [x] 路由
+
+
+
+### TODO
+
+- [ ] dao层
+- [ ] 容器部署
+- [ ] 日志处理
+- [ ] 熔断
+- [ ] 限流
+- [ ] 监控
+
+
+
+### 项目逻辑结构
+
+
+
 <img src="./static/img/go-kit.jpg">
 
 
@@ -21,6 +59,10 @@ endpoint层提供服务入口，将service层的服务包装，可在endpoint层
 service层提供业务逻辑处理， 将model层定义的参数，一系列业务处理后，变成model层的处理结果。
 
 
+
+
+
+### 项目代码结构
 
 ```
 .
